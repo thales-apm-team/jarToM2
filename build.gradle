@@ -1,0 +1,134 @@
+apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+description = 'payment-method-template'
+group 'bju.template'
+
+
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+}
+
+apply from: "external.gradle"
+
+
+String api = "payment-method-api"
+String integration = "payment-method-integration"
+
+
+
+tasks.publishToMavenLocal.dependsOn("toM2")
+
+String srcDir = "${projectDir}/src/main/resources"
+
+String m2Dir = "C:/Users/BriceJUNOY/.m2/repository"
+
+String version
+String myArtifact
+
+task toM2() {
+
+
+    FileTree tree = fileTree(srcDir)
+
+    tree.each { File file ->
+        System.out.println(file.name)
+        System.out.println(new Date().format("yyyyMMddhhmmss"))
+        if (file.name.startsWith(api)) {
+            version = file.name.replace(api + '-', "")
+            myArtifact = file.name.replace('-' + version, "")
+            version = version.replace(".jar", "")
+            String destDir = 'com/payline/' + api + '/' + version
+            File destF = new File(m2Dir + '/' + destDir)
+            mkdir destF
+            def metaFile1 = new File(m2Dir + '/' + destDir + '/maven-metadata-local.xml')
+            metaFile1.write('<?xml version="1.0" encoding="UTF-8"?>\n' +
+                    '<metadata modelVersion="1.1.0">\n' +
+                    '  <groupId>com.payline</groupId>\n' +
+                    '  <artifactId>payment-method-api</artifactId>\n' +
+                    '  <version>' + version + '</version>\n' +
+                    '  <versioning>\n' +
+                    '    <snapshot>\n' +
+                    '      <localCopy>true</localCopy>\n' +
+                    '    </snapshot>\n' +
+                    '    <lastUpdated>' + '</lastUpdated>\n' +
+                    '    <snapshotVersions>\n' +
+                    '      <snapshotVersion>\n' +
+                    '        <extension>jar</extension>\n' +
+                    '        <value>' + version + '</value>\n' +
+                    '        <updated>20180711091534</updated>\n' +
+                    '      </snapshotVersion>\n' +
+                    '      <snapshotVersion>\n' +
+                    '        <extension>pom</extension>\n' +
+                    '        <value>' + version + '</value>\n' +
+                    '        <updated>20180711091534</updated>\n' +
+                    '      </snapshotVersion>\n' +
+                    '    </snapshotVersions>\n' +
+                    '  </versioning>\n' +
+                    '</metadata>');
+            def pomFile1 = new File(m2Dir + '/' + destDir + '/payment-method-api-' + version + '.pom ')
+            pomFile1.write('<?xml version="1.0" encoding="UTF-8"?>\n' +
+                    '<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"\n' +
+                    '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
+                    '  <modelVersion>4.0.0</modelVersion>\n' +
+                    '  <groupId>com.payline</groupId>\n' +
+                    '  <artifactId>payment-method-api</artifactId>\n' +
+                    '  <version>' + version + '</version>\n' +
+                    '</project>')
+            file.renameTo(new File(m2Dir + '/' + destDir + '/' + file.name))
+        }
+
+
+        if (file.name.startsWith(integration)) {
+            version = file.name.replace(integration + '-', "")
+            myArtifact = file.name.replace('-' + version, "")
+            version = version.replace(".jar", "")
+            String destDir2 = 'com/payline/' + integration + '/' + version
+            File destF2 = new File(m2Dir + '/' + destDir2)
+            mkdir destF2
+            def metaFile2 = new File(m2Dir + '/' + destDir2 + '/maven-metadata-local.xml')
+            metaFile2.write('<?xml version="1.0" encoding="UTF-8"?>\n' +
+                    '<metadata modelVersion="1.1.0">\n' +
+                    '  <groupId>com.payline</groupId>\n' +
+                    '  <artifactId>payment-method-api</artifactId>\n' +
+                    '  <version>' + version + '</version>\n' +
+                    '  <versioning>\n' +
+                    '    <snapshot>\n' +
+                    '      <localCopy>true</localCopy>\n' +
+                    '    </snapshot>\n' +
+                    '    <lastUpdated>' + '</lastUpdated>\n' +
+                    '    <snapshotVersions>\n' +
+                    '      <snapshotVersion>\n' +
+                    '        <extension>jar</extension>\n' +
+                    '        <value>' + version + '</value>\n' +
+                    '        <updated>20180711091534</updated>\n' +
+                    '      </snapshotVersion>\n' +
+                    '      <snapshotVersion>\n' +
+                    '        <extension>pom</extension>\n' +
+                    '        <value>' + version + '</value>\n' +
+                    '        <updated>20180711091534</updated>\n' +
+                    '      </snapshotVersion>\n' +
+                    '    </snapshotVersions>\n' +
+                    '  </versioning>\n' +
+                    '</metadata>');
+            def pomFile1 = new File(m2Dir + '/' + destDir2 + '/payment-method-api-' + version + '.pom ')
+            pomFile1.write('<?xml version="1.0" encoding="UTF-8"?>\n' +
+                    '<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"\n' +
+                    '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
+                    '  <modelVersion>4.0.0</modelVersion>\n' +
+                    '  <groupId>com.payline</groupId>\n' +
+                    '  <artifactId>payment-method-integration</artifactId>\n' +
+                    '  <version>' + version + '</version>\n' +
+                    '</project>')
+            file.renameTo(new File(m2Dir + '/' + destDir2 + '/' + file.name))
+        }
+    }
+}
+
+
+
+
+
